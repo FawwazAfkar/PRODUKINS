@@ -76,9 +76,9 @@ class ProduksiResource extends Resource
                 Select::make('status_produksi')
                     ->label('Status Produksi')
                     ->options([
-                        'active' => 'Dalam Proses',
+                        'proses' => 'Dalam Proses',
                         'pending' => 'Pending',
-                        'completed' => 'Selesai',
+                        'selesai' => 'Selesai',
                     ])
                     ->required()
                     ->default('pending'),
@@ -131,6 +131,7 @@ class ProduksiResource extends Resource
 
                 TextColumn::make('status_produksi')
                     ->badge()
+                    ->label('Status Produksi')
                     ->getStateUsing(fn ($record) => match ($record->status_produksi) {
                         'proses' => 'Dalam Proses',
                         'pending' => 'Pending',
