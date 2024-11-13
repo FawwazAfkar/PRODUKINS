@@ -10,6 +10,7 @@ use App\Models\BahanBaku;
 
 class StatsOverview extends BaseWidget
 {
+    protected static ?int $sort = 0;
     protected function getStats(): array
     {
         return [

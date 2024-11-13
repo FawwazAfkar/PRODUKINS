@@ -68,8 +68,8 @@ class AlatProduksiResource extends Resource
                     ->label('ID Alat')
                     ->sortable(),
                 
-                TextColumn::make('nama_produk')
-                ->label('Nama Produk')
+                TextColumn::make('nama_alat')
+                ->label('Nama Alat')
                 ->wrap()
                 ->searchable()
                 ->sortable(),
