@@ -17,13 +17,25 @@ class BahanBakuResource extends Resource
 {
     protected static ?string $model = BahanBaku::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-wallet';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('nama_bahan')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('stok')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Select::make('status')
+                    ->options([
+                        'Tersedia' => 'Tersedia',
+                        'Proses Pengadaan' => 'Proses Pengadaan',
+                        'Tidak Tersedia' => 'Tidak Tersedia',
+                    ])
+                    ->required(),
             ]);
     }
 
@@ -31,6 +43,17 @@ class BahanBakuResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('nama_bahan')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('stok')
+                    ->searchable(),
+                Tables\Columns\BadgeColumn::make('status')
+                    ->colors([
+                        'success' => 'Tersedia',
+                        'warning' => 'Proses Pengadaan',
+                        'danger' => 'Tidak Tersedia',
+                    ])
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

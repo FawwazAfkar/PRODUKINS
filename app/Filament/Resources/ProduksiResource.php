@@ -22,7 +22,7 @@ class ProduksiResource extends Resource
 {
     protected static ?string $model = Produksi::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
 
     public static function form(Form $form): Form
     {

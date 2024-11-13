@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('bahan_bakus', function (Blueprint $table) {
             $table->id();
-            $table->string('bahanbakuID');
-            $table->string('nama');
+            $table->string('nama_bahan');
             $table->string('stok');
-            $table->enum('status', ['Tersedia', 'Proses Pengadaan', 'Tidak Tersedia']);
+            $table->enum('status', ['Tersedia', 'Proses Pengadaan', 'Tidak Tersedia'])->default('Tersedia');
             $table->timestamps();
         });
     }
