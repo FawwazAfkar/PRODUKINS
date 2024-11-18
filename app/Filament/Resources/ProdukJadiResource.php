@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProdukJadiResource\Pages;
 use App\Filament\Resources\ProdukJadiResource\RelationManagers;
+use App\Filament\Resources\ProdukJadiResource\RelationManagers\BahanBakusRelationManager;
 use App\Models\ProdukJadi;
+use App\Models\BahanBaku;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
@@ -25,53 +27,34 @@ class ProdukJadiResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
     public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                // id auto-generated
+{
+    return $form
+        ->schema([
+            // Nama Produk
+            TextInput::make('nama_produk')
+                ->label('Nama Produk')
+                ->placeholder('Masukkan Nama Produk')
+                ->required(),
 
-                // Nama Produk
-                TextInput::make('nama_produk')
-                    ->label('Nama Produk')
-                    ->placeholder('Masukkan Nama Produk')
-                    ->required(),
-                
-                // Kategori
-                TextInput::make('kategori')
-                    ->label('Kategori')
-                    ->placeholder('Masukkan Kategori Produk')
-                    ->required(),
+            // Kategori
+            TextInput::make('kategori')
+                ->label('Kategori')
+                ->placeholder('Masukkan Kategori Produk')
+                ->required(), 
 
-                // Bahan Baku
-                TextInput::make('bahan_baku')
-                    ->label('Bahan Baku')
-                    ->required()
-                    ->maxLength(255),
-                
-                // Stok
-                TextInput::make('stok')
-                    ->label('Stok')
-                    ->required()
-                    ->default(0),
-                
-                // Harga
-                TextInput::make('harga')
-                    ->label('Harga')
-                    ->required()
-                    ->default(0),
+            // Harga
+            TextInput::make('harga')
+                ->label('Harga')
+                ->required()
+                ->default(0),
 
-                // Status Produk (with a select field)
-                Select::make('status_produk')
-                    ->label('Status Produk')
-                    ->options([
-                        'tersedia' => 'Tersedia',
-                        'dalam_proses' => 'Dalam Proses',
-                        'tidak_tersedia' => 'Tidak Tersedia',
-                    ])
-                    ->default('tersedia')
-                    ->required(),
-            ]);
-    }
+            // Stok
+            TextInput::make('stok')
+                ->label('Stok')
+                ->required()
+                ->default(0),
+        ]);
+}
 
     public static function table(Table $table): Table
     {
@@ -91,37 +74,18 @@ class ProdukJadiResource extends Resource
                     ->label('Kategori')
                     ->searchable()
                     ->sortable(),
-
-                TextColumn::make('bahan_baku')
-                    ->label('Bahan Baku')
-                    ->wrap()
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('stok')
-                    ->label('Stok')
-                    ->searchable()
-                    ->sortable(),
-
+                
                 TextColumn::make('harga')
                     ->label('Harga')
                     ->formatStateUsing(fn ($state) => 'Rp' . number_format($state, 0, ',', '.')) // menurut PEUBI
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('status_produk')
-                    ->badge()
-                    ->label('Status Produk')
-                    ->getStateUsing(fn ($record) => match ($record->status_produk) {
-                        'tersedia' => 'Tersedia',
-                        'dalam_proses' => 'Dalam Proses',
-                        'tidak_tersedia' => 'Tidak Tersedia',
-                    })
-                    ->color(fn ($record) => match ($record->status_produk) {
-                        'tersedia' => 'success',
-                        'dalam_proses' => 'warning',
-                        'tidak_tersedia' => 'danger',
-                    })
+                TextColumn::make('stok')
+                    ->label('Stok')
+                    ->searchable()
+                    ->sortable(),                
+
             ])
             ->filters([
                 //
@@ -139,7 +103,7 @@ class ProdukJadiResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            BahanBakusRelationManager::class,
         ];
     }
 

@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bahan_bakus', function (Blueprint $table) {
+        Schema::create('materials', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_bahan');
-            $table->string('stok');
-            $table->enum('status', ['Tersedia', 'Proses Pengadaan', 'Tidak Tersedia'])->default('Tersedia');
+            $table->foreignId('produk_jadi_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('bahan_baku_id')->constrained()->cascadeOnDelete();
+            $table->integer('jumlah');
             $table->timestamps();
         });
+        
     }
 
     /**
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bahan_bakus');
+        Schema::dropIfExists('materials');
     }
 };

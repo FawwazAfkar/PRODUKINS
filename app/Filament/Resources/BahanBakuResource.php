@@ -7,9 +7,14 @@ use App\Filament\Resources\BahanBakuResource\RelationManagers;
 use App\Models\BahanBaku;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\IconColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -23,19 +28,12 @@ class BahanBakuResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama_bahan')
+                TextInput::make('nama_bahan')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('stok')
+                TextInput::make('stok')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('status')
-                    ->options([
-                        'Tersedia' => 'Tersedia',
-                        'Proses Pengadaan' => 'Proses Pengadaan',
-                        'Tidak Tersedia' => 'Tidak Tersedia',
-                    ])
-                    ->required(),
             ]);
     }
 
@@ -43,28 +41,40 @@ class BahanBakuResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nama_bahan')
+                TextColumn::make('nama_bahan')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Nama Bahan'),
+                TextColumn::make('stok')
+                    ->label('Stok')
+                    ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('stok')
-                    ->searchable(),
-                Tables\Columns\BadgeColumn::make('status')
-                    ->colors([
-                        'success' => 'Tersedia',
-                        'warning' => 'Proses Pengadaan',
-                        'danger' => 'Tidak Tersedia',
-                    ])
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-            ])
-            ->filters([
-                //
+                IconColumn::make('Add Stock') // Custom Add Stock Action
+                    ->getStateUsing(fn() => true)
+                    ->icon('heroicon-o-plus-circle')
+                    ->action(
+                        Action::make('addStock') 
+                        ->label('Add Stock')
+                        ->icon('heroicon-o-plus-circle')
+                        ->action(function (BahanBaku $record, array $data): void {
+                            $record->increment('stok', $data['amount']);
+                        })
+                        ->form([
+                            Forms\Components\TextInput::make('amount')
+                                ->label('Stock to Add')
+                                ->required()
+                                ->numeric()
+                                ->minValue(1),
+                        ]),
+                    )
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -74,7 +84,7 @@ class BahanBakuResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
+    }   
 
     public static function getRelations(): array
     {

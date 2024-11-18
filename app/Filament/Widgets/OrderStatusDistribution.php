@@ -7,7 +7,7 @@ use Filament\Widgets\ChartWidget;
 class OrderStatusDistribution extends ChartWidget
 {
     protected static ?string $heading = 'Distribusi Status Pesanan';
-    protected int | string | array $columnSpan = '1';
+    protected int | string | array $columnSpan = 'full';
     protected static ?int $sort = 3;
 
     protected function getData(): array

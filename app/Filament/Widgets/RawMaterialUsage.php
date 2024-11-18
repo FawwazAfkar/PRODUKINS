@@ -7,7 +7,7 @@ use Filament\Widgets\ChartWidget;
 class RawMaterialUsage extends ChartWidget
 {
     protected static ?string $heading = 'Penggunaan Bahan Baku Utama';
-    protected int | string | array $columnSpan = '1';
+    protected int | string | array $columnSpan = 'full';
     protected static ?int $sort = 2;
 
     protected function getData(): array

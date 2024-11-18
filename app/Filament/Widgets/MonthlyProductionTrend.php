@@ -7,7 +7,7 @@ use Filament\Widgets\ChartWidget;
 class MonthlyProductionTrend extends ChartWidget
 {
     protected static ?string $heading = 'Tren Produksi Bulanan';
-    protected int | string | array $columnSpan = '1';
+    protected int | string | array $columnSpan = 'full';
     protected static ?int $sort = 1;
 
     protected function getData(): array

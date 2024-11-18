@@ -12,6 +12,12 @@ class BahanBaku extends Model
     protected $fillable = [
         'nama_bahan',
         'stok',
-        'status',
     ];
+
+    public function produkJadis()
+    {
+        return $this->belongsToMany(ProdukJadi::class, 'materials')
+            ->withPivot(['jumlah'])
+            ->withTimestamps();
+    }
 }

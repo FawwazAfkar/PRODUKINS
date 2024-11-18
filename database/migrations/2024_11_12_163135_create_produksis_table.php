@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('produksis', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_produk');
+            $table->foreignId('produk_jadi_id')->constrained('produk_jadis')->onDelete('cascade');
             $table->date('tanggal_mulai');
             $table->time('jam_mulai');
-            $table->date('tanggal_selesai');
-            $table->time('jam_selesai');
+            $table->date('tanggal_selesai')->nullable();
+            $table->time('jam_selesai')->nullable();
             $table->integer('jumlah_produksi');
-            $table->string('bahan_baku');
+            $table->json('bahan_baku')->nullable(); // Directly define the column as JSON
             $table->enum('status_produksi', ['proses', 'pending', 'selesai'])->default('pending');
             $table->timestamps();
-        });
+        });        
     }
 
     /**

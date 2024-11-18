@@ -14,11 +14,9 @@ return new class extends Migration
         Schema::create('produk_jadis', function (Blueprint $table) {
             $table->id();
             $table->string('nama_produk');
-            $table->string('kategori'); // enum kah?
-            $table->string('bahan_baku');
+            $table->string('kategori');
             $table->integer('stok');
             $table->integer('harga');
-            $table->enum('status_produk', ['tersedia', 'dalam_proses', 'tidak_tersedia'])->default('tersedia');
             $table->timestamps();
         });
     }
