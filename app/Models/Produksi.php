@@ -35,7 +35,7 @@ class Produksi extends Model
         $produkJadi = ProdukJadi::with('bahanBakus')->find($produkJadiId);
 
         if (!$produkJadi) {
-            return [];
+            throw new \Exception("Produk Jadi tidak ditemukan.");
         }
 
         return $produkJadi->bahanBakus->map(function ($bahan) use ($jumlahProduksi) {
@@ -44,5 +44,33 @@ class Produksi extends Model
                 'jumlah' => $bahan->pivot->jumlah * $jumlahProduksi, // Multiply by production quantity
             ];
         })->toArray();
+    }
+
+    public static function calculateAndDeductMaterials(int $produkJadiId, int $jumlahProduksi): array
+    {
+        $produkJadi = ProdukJadi::with('bahanBakus')->find($produkJadiId);
+        $deductions = [];
+
+        if (!$produkJadi || !$produkJadi->bahanBakus) {
+            throw new \Exception("Produk Jadi atau bahan baku tidak ditemukan.");
+        }
+
+        foreach ($produkJadi->bahanBakus as $bahanBaku) {
+            $requiredAmount = $bahanBaku->pivot->jumlah * $jumlahProduksi;
+
+            if ($bahanBaku->stok < $requiredAmount) {
+                throw new \Exception("Bahan baku tidak mencukupi: {$bahanBaku->nama_bahan} ({$requiredAmount})");
+            }
+
+            $deductions[] = [
+                'nama_bahan' => $bahanBaku->nama_bahan,
+                'jumlah' => $requiredAmount,
+            ];
+
+            // Deduct stock
+            $bahanBaku->decrement('stok', $requiredAmount);
+        }
+
+        return $deductions;
     }
 }

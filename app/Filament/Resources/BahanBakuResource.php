@@ -5,7 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BahanBakuResource\Pages;
 use App\Filament\Resources\BahanBakuResource\RelationManagers;
 use App\Models\BahanBaku;
+use Faker\Provider\ar_EG\Text;
 use Filament\Forms;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -29,11 +31,17 @@ class BahanBakuResource extends Resource
         return $form
             ->schema([
                 TextInput::make('nama_bahan')
+                    ->label('Nama Bahan')
                     ->required()
                     ->maxLength(255),
                 TextInput::make('stok')
+                    ->label('Stok')
                     ->required()
                     ->maxLength(255),
+                TextInput::make('unit')
+                    ->label('Satuan')
+                    ->required()
+                    ->maxLength(50),
             ]);
     }
 
@@ -45,8 +53,9 @@ class BahanBakuResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->label('Nama Bahan'),
-                TextColumn::make('stok')
+                TextColumn::make('stok_with_unit')
                     ->label('Stok')
+                    ->getStateUsing(fn($record) => $record->stok . ' ' . $record->unit)
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('created_at')

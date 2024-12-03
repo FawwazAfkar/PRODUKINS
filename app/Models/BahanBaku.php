@@ -12,6 +12,7 @@ class BahanBaku extends Model
     protected $fillable = [
         'nama_bahan',
         'stok',
+        'unit',
     ];
 
     public function produkJadis()
@@ -20,4 +21,10 @@ class BahanBaku extends Model
             ->withPivot(['jumlah'])
             ->withTimestamps();
     }
+
+    public function getStokWithUnitAttribute()
+    {
+        return $this->stok . ' ' . ($this->unit ?? '');
+    }
+
 }

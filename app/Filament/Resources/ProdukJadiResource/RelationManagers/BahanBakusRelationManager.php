@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ProdukJadiResource\RelationManagers;
 
+use App\Models\BahanBaku;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
@@ -40,6 +41,7 @@ class BahanBakusRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('nama_bahan'),
                 TextInputColumn::make('jumlah'),
+                TextColumn::make('unit')->label('Satuan'),
             ])
             ->filters([
                 //
@@ -48,9 +50,15 @@ class BahanBakusRelationManager extends RelationManager
                 Tables\Actions\AttachAction::make()
                     ->preloadRecordSelect()
                     ->form(fn (AttachAction $action): array => [
-                        $action->getRecordSelect(),
+                        $action->getRecordSelect()
+                            ->reactive()
+                            ->afterStateUpdated(fn ($state, callable $set) => 
+                                $set('unit', BahanBaku::find($state)?->unit ?? '')),
                         TextInput::make('jumlah')
-                            ->label('Jumlah')
+                            ->label(function ($get) {
+                                $unit = $get('unit');
+                                return $unit ? "Jumlah ($unit)" : 'Jumlah';
+                            })
                             ->default(1)
                             ->rules(['required', 'numeric', 'min:1']),
                     ]

@@ -207,7 +207,7 @@ class PesananResource extends Resource
     {
         if ($record->status_pesanan === 'pending') {
             // Check stok before proceeding (pending status)
-            $produk = ProdukJadi::where('nama_produk', $record->nama_produk)->first();
+            $produk = ProdukJadi::where('id', $record->produk_jadi_id)->first();    
     
             // If the product doesn't exist, show an error
             if (!$produk) {
@@ -240,12 +240,13 @@ class PesananResource extends Resource
                 ->success()
                 ->body('Bukti pembayaran berhasil diunggah.')
                 ->send();
-    
+
+            return; // Stop further execution
         }
     
         if ($record->status_pesanan === 'diproses') {
             // Check stok before proceeding (diproses status)
-            $produk = ProdukJadi::where('nama_produk', $record->nama_produk)->first();
+            $produk = ProdukJadi::where('id', $record->produk_jadi_id)->first();
     
             // If the product doesn't exist, show an error
             if (!$produk) {
@@ -272,17 +273,19 @@ class PesananResource extends Resource
             // Deduct stok if sufficient
             $produk->decrement('stok', $record->jumlah);
     
-            // Update status to diproses
+            // Update status to dikirim
             $record->update([
-                'status_pesanan' => 'diproses',
-                'bukti_pembayaran' => $data['bukti_pembayaran'] ?? null,
+                'status_pesanan' => 'dikirim',
+                'no_resi' => $data['no_resi'] ?? null,
             ]);
     
             Notification::make()
                 ->title('Status Pesanan Diperbarui')
                 ->success()
-                ->body('Status pesanan berhasil diperbarui menjadi Diproses.')
+                ->body('Status pesanan berhasil diperbarui menjadi Dikirim.')
                 ->send();
+
+            return; // Stop further execution
         }
     
         if ($record->status_pesanan === 'dikirim') {
@@ -302,25 +305,25 @@ class PesananResource extends Resource
 
 
     private static function getDynamicForm($record)
-{
-    // Define dynamic fields based on the order's current status
-    return match ($record->status_pesanan) {
-        'pending' => [
-            FileUpload::make('bukti_pembayaran')
-                ->label('Upload Bukti Pembayaran')
-                ->disk('public')
-                ->directory('bukti_pembayaran')
-                ->required(),
-        ],
-        'diproses' => [
-            TextInput::make('no_resi')
-                ->label('Input Nomor Resi')
-                ->placeholder('Masukkan Nomor Resi')
-                ->required(),
-        ],
-        default => [], // No form fields required for 'dikirim' or 'selesai'
-    };
-}
+    {
+        // Define dynamic fields based on the order's current status
+        return match ($record->status_pesanan) {
+            'pending' => [
+                FileUpload::make('bukti_pembayaran')
+                    ->label('Upload Bukti Pembayaran')
+                    ->disk('public')
+                    ->directory('bukti_pembayaran')
+                    ->required(),
+            ],
+            'diproses' => [
+                TextInput::make('no_resi')
+                    ->label('Input Nomor Resi')
+                    ->placeholder('Masukkan Nomor Resi')
+                    ->required(),
+            ],
+            default => [], // No form fields required for 'dikirim' or 'selesai'
+        };
+    }
 
 
     public static function getRelations(): array
