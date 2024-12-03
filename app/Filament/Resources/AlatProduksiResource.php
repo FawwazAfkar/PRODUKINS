@@ -23,6 +23,16 @@ class AlatProduksiResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cog';
 
+    public static function getLabel(): ?string
+    {
+        return 'Alat Produksi';
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return 'Alat Produksi';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

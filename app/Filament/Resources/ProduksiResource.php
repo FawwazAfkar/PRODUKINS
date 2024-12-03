@@ -28,6 +28,15 @@ class ProduksiResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
 
+    public static function getLabel(): ?string
+    {
+        return 'Produksi';
+    }
+    public static function getPluralLabel(): string
+    {
+        return 'Produksi';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -101,6 +110,11 @@ class ProduksiResource extends Resource
                     ->required()
                     ->default('pending'),
             ]);
+    }
+
+    protected static function getCreateButtonLabel(): string 
+    {
+        return 'Tambah';
     }
 
     public static function table(Table $table): Table

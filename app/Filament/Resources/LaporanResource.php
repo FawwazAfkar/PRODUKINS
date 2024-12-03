@@ -19,6 +19,16 @@ class LaporanResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getLabel(): ?string
+    {
+        return 'Laporan';
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return 'Laporan';
+    }
+    
     public static function form(Form $form): Form
     {
         return $form
