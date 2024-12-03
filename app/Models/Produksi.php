@@ -27,7 +27,7 @@ class Produksi extends Model
 
     public function produkJadi()
     {
-        return $this->belongsTo(ProdukJadi::class);
+        return $this->belongsTo(ProdukJadi::class, 'produk_jadi_id');
     }
 
     public static function calculateBahanBaku($produkJadiId, $jumlahProduksi)
