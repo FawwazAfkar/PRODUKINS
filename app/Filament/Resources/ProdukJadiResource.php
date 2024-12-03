@@ -26,8 +26,17 @@ class ProdukJadiResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
-    public static function form(Form $form): Form
-{
+    public static function getLabel(): ?string
+    {
+        return 'Produk Jadi';
+    }
+
+    public static function getPluralLabel(): string
+    {
+        return 'Produk Jadi';
+    }
+
+    public static function form(Form $form): Form{
     return $form
         ->schema([
             // Nama Produk

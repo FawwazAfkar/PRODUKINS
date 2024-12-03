@@ -27,6 +27,16 @@ class PesananResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
+    public static function getLabel(): ?string
+    {
+        return 'Pesanan';
+    }   
+
+    public static function getPluralLabel(): string
+    {
+        return 'Pesanan';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

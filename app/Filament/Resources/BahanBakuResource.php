@@ -26,6 +26,15 @@ class BahanBakuResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-wallet';
 
+    public static function getLabel(): ?string
+    {
+        return 'Bahan Baku';
+    }
+    public static function getPluralLabel(): string
+    {
+        return 'Bahan Baku';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -66,19 +75,19 @@ class BahanBakuResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                IconColumn::make('Add Stock') // Custom Add Stock Action
+                IconColumn::make('Tambah Stok') // Custom Add Stock Action
                     ->getStateUsing(fn() => true)
                     ->icon('heroicon-o-plus-circle')
                     ->action(
                         Action::make('addStock') 
-                        ->label('Add Stock')
+                        ->label('Tambah Stok')
                         ->icon('heroicon-o-plus-circle')
                         ->action(function (BahanBaku $record, array $data): void {
                             $record->increment('stok', $data['amount']);
                         })
                         ->form([
                             Forms\Components\TextInput::make('amount')
-                                ->label('Stock to Add')
+                                ->label('Stock yang Ditambah')
                                 ->required()
                                 ->numeric()
                                 ->minValue(1),

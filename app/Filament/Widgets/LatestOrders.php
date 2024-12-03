@@ -10,7 +10,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class LatestOrders extends BaseWidget
 {
-    protected static ?string $heading = 'Latest Production';
+    protected static ?string $heading = 'Produksi Terakhir';
     protected int | string | array $columnSpan = 'full';
     protected static ?int $sort = 4;
     public function table(Table $table): Table
