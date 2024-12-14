@@ -11,10 +11,12 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -55,6 +57,14 @@ class ProdukJadiResource extends Resource
                 ->required()
                 ->readOnly()
                 ->default(0),
+            
+            // Picture upload
+            FileUpload::make('gambar')
+            ->label('Gambar Produk')
+            ->image()
+            ->disk('public')
+            ->directory('gambar_produk_jadi')
+            ->required(false),
         ]);
 }
 
@@ -65,6 +75,14 @@ class ProdukJadiResource extends Resource
                 TextColumn::make('id')
                     ->label('ID')
                     ->sortable(),
+                
+                ImageColumn::make('gambar')
+                    ->label('Gambar')
+                    ->disk('public')
+                    ->size(100)
+                    ->getStateUsing(function ($record) {
+                        return asset('storage/' . $record->gambar);
+                    }),
 
                 TextColumn::make('nama_produk')
                     ->label('Nama Produk')

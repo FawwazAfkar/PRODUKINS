@@ -13,6 +13,7 @@ class ProdukJadi extends Model
         'kategori', 
         'stok',
         'harga',
+        'gambar',
     ];
     
     public function bahanBakus()

@@ -21,6 +21,15 @@ class BahanBaku extends Model
             ->withPivot(['jumlah'])
             ->withTimestamps();
     }
+    
+    protected static function booted()
+    {
+        static::deleting(function ($bahanBaku) {
+            if ($bahanBaku->produkJadis()->exists()) {
+                throw new \Exception('Bahan baku tidak bisa dihapus karena masih digunakan oleh produk jadi.');
+            }
+        });
+    }
 
     public function getStokWithUnitAttribute()
     {

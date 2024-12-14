@@ -17,7 +17,6 @@ use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 
 class ProduksiReport extends Report
 {
-    
     protected static ?string $title = 'Rekap Produksi';
     protected static ?string $slug = 'rekap-produksi';
     protected static ?string $navigationGroup = 'Rekap';
@@ -65,11 +64,9 @@ class ProduksiReport extends Report
                         Body\Table::make()
                             ->columns([
                                 Body\TextColumn::make('tanggal_mulai')
-                                    ->label("Start Date")
-                                    ->date('tanggal_mulai'),
+                                    ->label("Start Date"),
                                 Body\TextColumn::make('tanggal_selesai')
-                                    ->label("End Date")
-                                    ->date('tanggal_selesai'),
+                                    ->label("End Date"),
                                 Body\TextColumn::make('nama_produk')
                                     ->label("Product Name"),
                                 Body\TextColumn::make("jumlah_produksi")
@@ -77,13 +74,21 @@ class ProduksiReport extends Report
                             ])
                             ->data(function (?array $filters) {
                                 $dateRange = $filters['production_date'] ?? null;
-                                [$from, $to] = $dateRange
-                                    ? array_map(
-                                        fn($date) => Carbon::parse($date)->startOfDay(),
-                                        explode(' - ', $dateRange)
-                                    )
-                                    : [null, null];
-                            
+                                $dateFormat = 'Y-m-d';
+
+                                // Safely parse dates
+                                try {
+                                    [$from, $to] = $dateRange
+                                        ? array_map(
+                                            fn($date) => Carbon::createFromFormat($dateFormat, trim($date))->startOfDay(),
+                                            explode(' - ', $dateRange)
+                                        )
+                                        : [null, null];
+                                } catch (\Exception $e) {
+                                    logger()->error('Failed to parse date range', ['error' => $e->getMessage(), 'input' => $dateRange]);
+                                    $from = $to = null; // Fallback if parsing fails
+                                }
+
                                 return Produksi::query()
                                     ->with('produkJadi')
                                     ->when($from, fn($query) => $query->whereDate('tanggal_mulai', '>=', $from))
@@ -94,11 +99,18 @@ class ProduksiReport extends Report
                                         return $record;
                                     });
                             }),
-                            VerticalSpace::make(),
+                        VerticalSpace::make(),
                     ]),
             ]);
     }
 
-
-   
+    public function filterForm(Form $form): Form
+    {
+        return $form
+            ->schema([
+                DateRangePicker::make("production_date")
+                    ->label("Production Date")
+                    ->placeholder("Select a date range"),
+            ]);
+    }
 }
