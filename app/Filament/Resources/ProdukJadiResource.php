@@ -25,16 +25,8 @@ class ProdukJadiResource extends Resource
     protected static ?string $model = ProdukJadi::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
-
-    public static function getLabel(): ?string
-    {
-        return 'Produk Jadi';
-    }
-
-    public static function getPluralLabel(): string
-    {
-        return 'Produk Jadi';
-    }
+    protected static ?string $title = 'Produk Jadi';
+    protected static ?string $slug = 'produk-jadi';
 
     public static function form(Form $form): Form{
     return $form
@@ -61,6 +53,7 @@ class ProdukJadiResource extends Resource
             TextInput::make('stok')
                 ->label('Stok')
                 ->required()
+                ->readOnly()
                 ->default(0),
         ]);
 }
@@ -93,7 +86,7 @@ class ProdukJadiResource extends Resource
                 TextColumn::make('stok')
                     ->label('Stok')
                     ->searchable()
-                    ->sortable(),                
+                    ->sortable(),
 
             ])
             ->filters([

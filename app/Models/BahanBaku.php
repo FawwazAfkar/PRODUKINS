@@ -26,5 +26,9 @@ class BahanBaku extends Model
     {
         return $this->stok . ' ' . ($this->unit ?? '');
     }
+    public function isBelowMinimumStock(): bool
+    {
+        return $this->stok < 3;
+    }
 
 }

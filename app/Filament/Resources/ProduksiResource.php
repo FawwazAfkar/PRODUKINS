@@ -15,6 +15,7 @@ use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Hidden;
 use Filament\Resources\Resource;
 use Filament\Notifications\Notification;
 use Filament\Tables;
@@ -29,15 +30,8 @@ class ProduksiResource extends Resource
     protected static ?string $model = Produksi::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
-
-    public static function getLabel(): ?string
-    {
-        return 'Produksi';
-    }
-    public static function getPluralLabel(): string
-    {
-        return 'Produksi';
-    }
+    protected static ?string $title = 'Produksi';
+    protected static ?string $slug = 'produksi';
 
     public static function form(Form $form): Form
     {
@@ -112,6 +106,11 @@ class ProduksiResource extends Resource
                     ])
                     ->required()
                     ->default('pending'),
+
+                    Hidden::make('bahan_baku')
+                    ->afterStateHydrated(function ($state) {
+                        return is_string($state) ? json_decode($state, true) : $state;
+                    })
             ]);
     }
 
@@ -161,17 +160,28 @@ class ProduksiResource extends Resource
 
                 // Displaying Bahan Baku as a readable string from JSON
                 TextColumn::make('bahan_baku')
-                    ->label('Bahan Baku')
-                    ->wrap()
-                    ->searchable()
-                    ->getStateUsing(function ($record) {
-                        // Checking if 'bahan_baku' contains data and returning it as a string
-                        if ($record->bahan_baku && is_array($record->bahan_baku)) {
-                            return collect($record->bahan_baku)
-                                ->map(fn($item) => $item['nama_bahan'] . ' - ' . $item['jumlah'])
-                                ->implode(', ');  // Combines the array into a readable string
-                        }
-                        return 'No Bahan Baku';  // In case it's empty or null
+                ->label('Bahan Baku')
+                ->wrap()
+                ->searchable()
+                ->getStateUsing(function ($record) {
+                    if ($record->bahan_baku && is_array($record->bahan_baku)) {
+                        return collect($record->bahan_baku)
+                            ->map(function($item) {
+                                $bahanBaku = \App\Models\BahanBaku::where('nama_bahan', $item['nama_bahan'])->first();
+                                $stokTersedia = $bahanBaku ? $bahanBaku->stok : 0;
+                                
+                                return sprintf(
+                                    '%s - %g %s (Stok: %g %s)',
+                                    $item['nama_bahan'],
+                                    $item['jumlah'],
+                                    $item['unit'] ?? '',
+                                    $stokTersedia,
+                                    $bahanBaku ? $bahanBaku->unit : ''
+                                );
+                            })
+                            ->implode("\n");
+                    }
+                    return 'no Bahan Baku';
                     }),
 
                 TextColumn::make('status_produksi')
@@ -189,7 +199,14 @@ class ProduksiResource extends Resource
                     })
             ])
             ->filters([
-                // You can add filters here if needed
+                Tables\Filters\SelectFilter::make('status_produksi')
+                    ->label('Status Produksi')
+                    ->options([
+                        'proses' => 'Dalam Proses',
+                        'pending' => 'Pending',
+                        'selesai' => 'Selesai',
+                    ]),
+
             ])
             ->actions([
                 Tables\Actions\Action::make('manage_produksi')

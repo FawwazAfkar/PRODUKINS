@@ -25,15 +25,8 @@ class BahanBakuResource extends Resource
     protected static ?string $model = BahanBaku::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-wallet';
-
-    public static function getLabel(): ?string
-    {
-        return 'Bahan Baku';
-    }
-    public static function getPluralLabel(): string
-    {
-        return 'Bahan Baku';
-    }
+    protected static ?string $title = 'Bahan Baku';
+    protected static ?string $slug = 'bahan-baku';
 
     public static function form(Form $form): Form
     {
@@ -67,6 +60,11 @@ class BahanBakuResource extends Resource
                     ->getStateUsing(fn($record) => $record->stok . ' ' . $record->unit)
                     ->sortable()
                     ->searchable(),
+                IconColumn::make('warning')
+                    ->label('')
+                    ->icon('heroicon-o-exclamation-circle')
+                    ->color('danger')
+                    ->visible((fn($record) => $record!=null && $record->isBelowMinimumStock())),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

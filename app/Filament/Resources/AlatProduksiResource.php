@@ -22,16 +22,8 @@ class AlatProduksiResource extends Resource
     protected static ?string $model = AlatProduksi::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog';
-
-    public static function getLabel(): ?string
-    {
-        return 'Alat Produksi';
-    }
-
-    public static function getPluralLabel(): string
-    {
-        return 'Alat Produksi';
-    }
+    protected static ?string $title = 'Alat Produksi';
+    protected static ?string $slug = 'alat-produksi';
 
     public static function form(Form $form): Form
     {

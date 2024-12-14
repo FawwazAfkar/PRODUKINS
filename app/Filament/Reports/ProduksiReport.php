@@ -17,6 +17,11 @@ use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 
 class ProduksiReport extends Report
 {
+    
+    protected static ?string $title = 'Rekap Produksi';
+    protected static ?string $slug = 'rekap-produksi';
+    protected static ?string $navigationGroup = 'Rekap';
+
     public function header(Header $header): Header
     {
         $imagePath = asset('img/fr-logo.png');
@@ -35,9 +40,9 @@ class ProduksiReport extends Report
                                 Text::make("Produksi Report")
                                     ->title()
                                     ->primary(),
-                                Text::make("Monthly production summary report")
+                                Text::make("Report Produksi Bulanan")
                                     ->subtitle(),
-                                Text::make("Generated on: " . now()->format("d/m/Y H:i:s"))
+                                Text::make("Dibuat pada: " . now()->format("d/m/Y H:i:s"))
                                     ->subtitle(),
                             ])->alignRight(),
                     ]),
@@ -50,21 +55,21 @@ class ProduksiReport extends Report
             ->schema([
                 Body\Layout\BodyColumn::make()
                     ->schema([
-                        Text::make("Produksi Details")
+                        Text::make("Detail Produksi")
                             ->fontXl()
                             ->fontBold()
                             ->primary(),
-                        Text::make("This is a list of produk created during the selected month")
+                        Text::make("Berikut ini merupakan list produksi yang telah dilakukan.")
                             ->fontSm()
                             ->secondary(),
                         Body\Table::make()
                             ->columns([
                                 Body\TextColumn::make('tanggal_mulai')
                                     ->label("Start Date")
-                                    ->dateTime(),
+                                    ->date('tanggal_mulai'),
                                 Body\TextColumn::make('tanggal_selesai')
                                     ->label("End Date")
-                                    ->dateTime(),
+                                    ->date('tanggal_selesai'),
                                 Body\TextColumn::make('nama_produk')
                                     ->label("Product Name"),
                                 Body\TextColumn::make("jumlah_produksi")
@@ -78,10 +83,10 @@ class ProduksiReport extends Report
                                         explode(' - ', $dateRange)
                                     )
                                     : [null, null];
-            
+                            
                                 return Produksi::query()
                                     ->with('produkJadi')
-                                    ->when($from, fn($query) => $query->whereDate('tanggal_selesai', '>=', $from))
+                                    ->when($from, fn($query) => $query->whereDate('tanggal_mulai', '>=', $from))
                                     ->when($to, fn($query) => $query->whereDate('tanggal_selesai', '<=', $to))
                                     ->get()
                                     ->map(function ($record) {
@@ -89,26 +94,11 @@ class ProduksiReport extends Report
                                         return $record;
                                     });
                             }),
-                        VerticalSpace::make(),
+                            VerticalSpace::make(),
                     ]),
             ]);
     }
 
-    public function footer(Footer $footer): Footer
-    {
-        return $footer
-            ->schema([
-                Text::make("Thank you for reviewing this report."),
-            ]);
-    }
 
-    public function filterForm(Form $form): Form
-    {
-        return $form
-            ->schema([
-                DateRangePicker::make("production_date")
-                    ->label("Production Date")
-                    ->placeholder("Select a date range"),
-            ]);
-    }
+   
 }

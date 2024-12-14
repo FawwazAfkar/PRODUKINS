@@ -26,7 +26,7 @@ class LatestOrders extends BaseWidget
                     ->label('ID Produksi')
                     ->sortable(),
 
-                TextColumn::make('nama_produk')
+                TextColumn::make('produkJadi.nama_produk')
                     ->label('Nama Produk')
                     ->wrap()
                     ->searchable()

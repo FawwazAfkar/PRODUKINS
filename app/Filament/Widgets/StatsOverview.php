@@ -6,7 +6,6 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Models\Produksi;
 use App\Models\Pesanan;
-use App\Models\BahanBaku;
 
 class StatsOverview extends BaseWidget
 {
@@ -20,9 +19,6 @@ class StatsOverview extends BaseWidget
             Stat::make('Pesanan', Pesanan::count())
                 ->icon('heroicon-o-shopping-cart')
                 ->color('green'),
-            Stat::make('Bahan Baku', BahanBaku::count())
-                ->icon('heroicon-o-wallet')
-                ->color('yellow'),
         ];
     }
 }

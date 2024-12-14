@@ -13,19 +13,24 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\DateRangeFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Date;
 
 class PesananResource extends Resource
 {
     protected static ?string $model = Pesanan::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static ?string $title = 'Pesanan';
+    protected static ?string $slug = 'pesanan';
 
     public static function getLabel(): ?string
     {
@@ -182,6 +187,14 @@ class PesananResource extends Resource
             ])
             ->filters([
                 //
+                Tables\Filters\SelectFilter::make('status_pesanan')
+                    ->label('Status Pesanan')
+                    ->options([
+                        'diproses' => 'Diproses',
+                        'pending' => 'Tertunda',
+                        'dikirim' => 'Dikirim',
+                        'selesai' => 'Selesai',
+                    ]),
             ])
             ->actions([
                 Action::make('update_status')

@@ -19,6 +19,7 @@ class Produksi extends Model
         'jam_selesai',
         'jumlah_produksi',
         'status_produksi',
+        'bahan_baku',
     ];
 
     protected $casts = [
@@ -41,7 +42,8 @@ class Produksi extends Model
         return $produkJadi->bahanBakus->map(function ($bahan) use ($jumlahProduksi) {
             return [
                 'nama_bahan' => $bahan->nama_bahan,
-                'jumlah' => $bahan->pivot->jumlah * $jumlahProduksi, // Multiply by production quantity
+                'jumlah' => $bahan->pivot->jumlah * $jumlahProduksi,
+                'unit' => $bahan->unit,
             ];
         })->toArray();
     }
